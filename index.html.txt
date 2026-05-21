@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Advanced Live Editor</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:sans-serif;
+}
+
+body{
+height:100vh;
+background:#0f172a;
+display:flex;
+flex-direction:column;
+overflow:hidden;
+}
+
+/* TOP BAR */
+
+.topbar{
+height:60px;
+background:#111827;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
+border-bottom:2px solid #1e293b;
+}
+
+.logo{
+color:white;
+font-size:22px;
+font-weight:bold;
+}
+
+.buttons{
+display:flex;
+gap:10px;
+}
+
+button{
+padding:10px 15px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+background:#38bdf8;
+color:black;
+transition:.2s;
+}
+
+button:hover{
+transform:scale(1.05);
+}
+
+/* MAIN */
+
+.container{
+flex:1;
+display:flex;
+overflow:hidden;
+}
+
+/* EDITOR */
+
+.editor{
+width:50%;
+background:#111827;
+display:flex;
+flex-direction:column;
+padding:10px;
+gap:10px;
+overflow:auto;
+}
+
+.code-box{
+flex:1;
+display:flex;
+flex-direction:column;
+}
+
+label{
+color:#38bdf8;
+margin-bottom:5px;
+font-weight:bold;
+}
+
+/* CODE AREA */
+
+.code-area{
+flex:1;
+display:flex;
+background:#1e293b;
+border-radius:10px;
+overflow:hidden;
+}
+
+.lines{
+width:50px;
+background:#0f172a;
+color:#64748b;
+text-align:right;
+padding:10px 5px;
+font-size:14px;
+line-height:20px;
+user-select:none;
+overflow:hidden;
+}
+
+textarea{
+flex:1;
+background:transparent;
+border:none;
+outline:none;
+resize:none;
+padding:10px;
+color:white;
+font-size:14px;
+line-height:20px;
+}
+
+/* PREVIEW */
+
+.preview{
+width:50%;
+background:white;
+}
+
+iframe{
+width:100%;
+height:100%;
+border:none;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.container{
+flex-direction:column;
+}
+
+.editor,
+.preview{
+width:100%;
+height:50%;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+
+<div class="logo">
+Live Code Editor
+</div>
+
+<div class="buttons">
+<button onclick="runCode()">Run</button>
+<button onclick="openPreview()">Open Preview</button>
+</div>
+
+</div>
+
+<div class="container">
+
+<!-- LEFT -->
+
+<div class="editor">
+
+<!-- HTML -->
+
+<div class="code-box">
+
+<label>HTML</label>
+
+<div class="code-area">
+
+<div class="lines" id="html-lines">1</div>
+
+<textarea id="html">
+<h1>Hello World</h1>
+</textarea>
+
+</div>
+
+</div>
+
+<!-- CSS -->
+
+<div class="code-box">
+
+<label>CSS</label>
+
+<div class="code-area">
+
+<div class="lines" id="css-lines">1</div>
+
+<textarea id="css">
+body{
+background:black;
+color:white;
+text-align:center;
+}
+</textarea>
+
+</div>
+
+</div>
+
+<!-- JS -->
+
+<div class="code-box">
+
+<label>JavaScript</label>
+
+<div class="code-area">
+
+<div class="lines" id="js-lines">1</div>
+
+<textarea id="js">
+console.log("Hello");
+</textarea>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- RIGHT -->
+
+<div class="preview">
+<iframe id="output"></iframe>
+</div>
+
+</div>
+
+<script>
+
+let html = document.getElementById("html");
+let css = document.getElementById("css");
+let js = document.getElementById("js");
+
+let output = document.getElementById("output");
+
+/* RUN CODE */
+
+function runCode(){
+
+let code = `
+
+<style>
+${css.value}
+</style>
+
+${html.value}
+
+<script>
+${js.value}
+<\/script>
+
+`;
+
+output.srcdoc = code;
+
+}
+
+/* AUTO RUN */
+
+html.addEventListener("input", runCode);
+css.addEventListener("input", runCode);
+js.addEventListener("input", runCode);
+
+/* LINE NUMBERS */
+
+function updateLines(textarea, lines){
+
+let count = textarea.value.split("\n").length;
+
+let numbers = "";
+
+for(let i=1;i<=count;i++){
+numbers += i + "<br>";
+}
+
+lines.innerHTML = numbers;
+
+}
+
+function setup(textareaId, lineId){
+
+let textarea = document.getElementById(textareaId);
+let lines = document.getElementById(lineId);
+
+textarea.addEventListener("input", ()=>{
+
+updateLines(textarea, lines);
+
+});
+
+updateLines(textarea, lines);
+
+}
+
+setup("html","html-lines");
+setup("css","css-lines");
+setup("js","js-lines");
+
+/* OPEN PREVIEW */
+
+function openPreview(){
+
+let newWindow = window.open();
+
+newWindow.document.write(output.srcdoc);
+
+}
+
+/* START */
+
+runCode();
+
+</script>
+
+</body>
+</html>
